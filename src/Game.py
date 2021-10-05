@@ -9,6 +9,9 @@ class Game:
     def setMap(self, map):
         self.map = map
 
+    def setID(self, gameID):
+        self.gameID = gameID
+
     def setDate(self, date):
         self.date = date
 
@@ -29,14 +32,30 @@ class Game:
         self.team2roundswon = team2rounds
         self.roundsplayed = self.team1roundswon + self.team2roundswon
 
+    def getTeamsFromPlayers(self, players):
+        for player in players:
+            for stat in player.stats:
+                if stat.gameID == self.gameID:
+                    if player.team == 1:
+                        self.team1.append(player)
+                    else:
+                        self.team2.append(player)
+
     def printGame(self):
         print(self.map)
         print(self.date)
         print(self.matchpage)
+        print(self.gameID)
         print("Team 1 -", self.team1roundswon)
         for player in self.team1:
             print(player.name)
         print("Team 2 -", self.team2roundswon)
         for player in self.team2:
             print(player.name)
-
+    def printShortGame(self):
+        print(self.map)
+        print(self.date)
+        print(self.matchpage)
+        print(self.gameID)
+        print("Team 1 -", self.team1roundswon)
+        print("Team 2 -", self.team2roundswon)
