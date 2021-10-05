@@ -24,13 +24,20 @@ class Series:
                 if player not in self.team2:
                     self.team2.append(player)
 
+    def getGameRoundsByID(self, gameID):
+        for game in self.games:
+            if game.gameID == gameID:
+                return game.roundsplayed
+
     def printSeries(self):
-        print(self.totalrounds, " round series")
+        print(self.totalrounds, "round series")
         print("Team 1 -")
         for player in self.team1:
             print(player.name)
+            player.printPlayer()
         print("Team 2 -")
         for player in self.team2:
             print(player.name)
+            player.printPlayer()
         for game in self.games:
             game.printShortGame()

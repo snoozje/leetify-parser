@@ -9,36 +9,45 @@ class Stat:
         self.hsp = 0
         self.leetifyR = 0
         self.hltvR = 0
+        self.roundsplayed = 0
         self.gameID = ""
 
     def setKills(self, kills):
-        self.kills = kills
+        self.kills = int(kills)
 
     def setAssists(self, assists):
-        self.assists = assists
+        self.assists = int(assists)
 
     def setDeaths(self, deaths):
-        self.deaths = deaths
+        self.deaths = int(deaths)
 
     def setKD(self, kdratio):
-        self.kdratio = kdratio
+        self.kdratio = float(kdratio)
 
     def setADR(self, adr):
-        self.adr = adr
+        self.adr = float(adr)
 
-    def setHSP(self, hsp):
+    def setHSPFloat(self, hsp):
         self.hsp = hsp
 
+    def setHSP(self, hsp):
+        hs = hsp.split()
+        self.hsp = int(hs[0])
+
     def setLeetifyRating(self, leetifyR):
-        self.leetifyR = leetifyR
+        self.leetifyR = float(leetifyR)
 
     def setHLTVRating(self, hltvR):
-        self.hltvR = hltvR
+        self.hltvR = float(hltvR)
+
+    def setRoundsPlayed(self, rounds):
+        self.roundsplayed = rounds
 
     def setGameID(self, gameID):
         self.gameID = gameID
 
     def printStat(self):
+        """
         print("kills:", self.kills)
         print("assists:", self.assists)
         print("deaths:", self.deaths)
@@ -47,3 +56,5 @@ class Stat:
         print("HS%:", self.hsp)
         print("Leetify Rating:", self.leetifyR)
         print("HLTV Rating:", self.hltvR)
+        """
+        print(self.kills, self.assists, self.deaths, self.kdratio, self.adr, self.hsp, self.leetifyR, self.hltvR)

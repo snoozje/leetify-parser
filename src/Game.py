@@ -3,6 +3,7 @@ class Game:
     def __init__(self):
         self.team1roundswon = 0
         self.team2roundswon = 0
+        self.roundsplayed = 0
         self.team1 = []
         self.team2 = []
 
@@ -26,11 +27,11 @@ class Game:
 
     def setTeam1RoundsWon(self, team1rounds):
         self.team1roundswon = team1rounds
-        self.roundsplayed = self.team1roundswon + self.team2roundswon
+        self.roundsplayed += self.team1roundswon
 
     def setTeam2RoundsWon(self, team2rounds):
         self.team2roundswon = team2rounds
-        self.roundsplayed = self.team1roundswon + self.team2roundswon
+        self.roundsplayed += self.team2roundswon
 
     def getTeamsFromPlayers(self, players):
         for player in players:

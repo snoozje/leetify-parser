@@ -4,12 +4,14 @@ from Game import Game
 from Stat import Stat
 from Series import Series
 import requests
-url='https://beta.leetify.com/public/match-details/5191f7f6-d889-4ae8-958e-247cf8fe20f0'
+
+url = 'https://beta.leetify.com/public/match-details/5191f7f6-d889-4ae8-958e-247cf8fe20f0'
 ncc1 = "https://beta.leetify.com/public/match-details/e481b6ab-5b67-44f9-9737-350b3b032971"
 ncc2 = "https://beta.leetify.com/public/match-details/c4678f10-398f-4190-b8ef-a9ed385c0f86"
 urls = [ncc1, ncc2]
 
-def processPlayerRow(playerRow, gameID, players, team):
+
+def processPlayerRow(playerRow, gameID, players, team, rounds):
     playerName = playerRow.contents[0].contents[0].span.string.strip()
     currentPlayer = None
     for player in players:
@@ -21,9 +23,10 @@ def processPlayerRow(playerRow, gameID, players, team):
         currentPlayer.team = team
         players.append(currentPlayer)
 
-    currentPlayer.addStats(createStat(playerRow, gameID))
+    currentPlayer.addStats(createStat(playerRow, gameID, rounds))
 
-def createStat(playerRow, gameID):
+
+def createStat(playerRow, gameID, rounds):
     currentStat = Stat()
     playerData = playerRow.contents
 
@@ -35,13 +38,12 @@ def createStat(playerRow, gameID):
     currentStat.setHSP(playerData[7].string)
     currentStat.setLeetifyRating(playerData[12].string)
     currentStat.setHLTVRating(playerData[13].string)
+    currentStat.setRoundsPlayed(rounds)
     currentStat.setGameID(gameID)
     return currentStat
 
-
-
+"""
 def createPlayer(playerRow):
-
     playerName = playerRow.contents[0].contents[0].span.string.strip()
     currentPlayer = Player(playerName)
     playerData = playerRow.contents
@@ -55,6 +57,7 @@ def createPlayer(playerRow):
     currentPlayer.setLeetifyRating(playerData[12].string)
     currentPlayer.setHLTVRating(playerData[13].string)
     return currentPlayer
+"""
 
 def createGame(url, players=[]):
     gameID = url.rsplit('/', 1)[-1]
@@ -62,8 +65,6 @@ def createGame(url, players=[]):
     content = req.text
     soup = BeautifulSoup(content, features="html.parser")
     playerRows = soup.find_all('tr')
-
-    # remove non-player headers
 
     currentgame = Game()
     currentgame.setID(gameID)
@@ -81,33 +82,34 @@ def createGame(url, players=[]):
         currentgame.setMatchpage(matchpage)
 
     score = soup.find(class_="mb-0 mx-3").string
-    #print(score)
+    # print(score)
     scores = score.split(':')
     currentgame.setTeam1RoundsWon(int(scores[0]))
     currentgame.setTeam2RoundsWon(int(scores[1]))
     team = None
     for playerRow in playerRows:
-        #only team headers have class, so we know it is a team
-        #not a player named 'Team A'
-        #needs more logic for series, in the event that A and B are
-        #swapped between matches
-        if playerRow.contents[0].get('class') != None:
+        # only team headers have class, so we know it is a team
+        # not a player named 'Team A'
+        # needs more logic for series, in the event that A and B are
+        # swapped between matches
+        if playerRow.contents[0].get('class') is not None:
             if playerRow.contents[0].contents[0].strip() == 'Team A':
                 team = 1
             else:
                 team = 2
         else:
-            processPlayerRow(playerRow, gameID, players, team)
+            processPlayerRow(playerRow, gameID, players, team, currentgame.roundsplayed)
 
     currentgame.getTeamsFromPlayers(players)
 
-    #currentgame.setTeam1(players[0:5])
-    #currentgame.setTeam2(players[5:10])
-    #currentgame.printGame()
     return currentgame
+
 
 def createSeries(gamesUrls):
     series = Series()
     for game in gamesUrls:
         series.addGame(createGame(game, series.players))
     series.printSeries()
+
+
+createSeries(urls)
