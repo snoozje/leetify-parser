@@ -57,4 +57,20 @@ def createGame(url):
     currentgame.setTeam2(players[5:10])
     currentgame.printGame()
 
-def createSeries
+def createSeries(games):
+
+    currentgame = Game()
+    allplayerswithduplicates = []
+    for game in games:
+        currentgame.addGame(game)
+
+
+
+
+
+
+
+
+
+
+

@@ -2,6 +2,14 @@ class Player:
 
     def __init__(self, name):
         self.name = name
+        self.kills = 0
+        self.assists = 0
+        self.deaths = 0
+        self.kdratio = 0
+        self.adr = 0
+        self.hsp = 0
+        self.leetifyR = 0
+        self.hltvR = 0
 
     def setKills(self, kills):
         self.kills = kills
@@ -10,7 +18,7 @@ class Player:
         self.assists = assists
 
     def setDeaths(self, deaths):
-        self.deaths = deaths;
+        self.deaths = deaths
 
     def setKD(self, kdratio):
         self.kdratio = kdratio
@@ -26,6 +34,9 @@ class Player:
 
     def setHLTVRating(self, hltvR):
         self.hltvR = hltvR
+
+    def __eq__(self, other):
+        return self.name == other.name
 
     def printPlayer(self):
         print("name:", self.name)

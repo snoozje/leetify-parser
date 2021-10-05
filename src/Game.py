@@ -3,6 +3,8 @@ class Game:
     def __init__(self):
         self.team1roundswon = 0
         self.team2roundswon = 0
+        self.team1 = []
+        self.team2 = []
 
     def setMap(self, map):
         self.map = map
