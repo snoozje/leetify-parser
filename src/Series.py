@@ -31,6 +31,13 @@ class Series:
 
     def printSeries(self):
         print(self.totalrounds, "round series")
+        for player in self.team1:
+            player.calculateTotalStats()
+        for player in self.team2:
+            player.calculateTotalStats()
+
+        self.team1 = sorted(self.team1, reverse=True)
+        self.team2 = sorted(self.team2, reverse=True)
         print("Team 1 -")
         for player in self.team1:
             print(player.name)

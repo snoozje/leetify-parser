@@ -4,11 +4,19 @@ from Game import Game
 from Stat import Stat
 from Series import Series
 import requests
+import csv
 
-url = 'https://beta.leetify.com/public/match-details/5191f7f6-d889-4ae8-958e-247cf8fe20f0'
 ncc1 = "https://beta.leetify.com/public/match-details/e481b6ab-5b67-44f9-9737-350b3b032971"
 ncc2 = "https://beta.leetify.com/public/match-details/c4678f10-398f-4190-b8ef-a9ed385c0f86"
-urls = [ncc1, ncc2]
+
+neur1 = "https://beta.leetify.com/public/match-details/93a1adc9-5ae3-452f-80ec-1140955d7056"
+neur2 = "https://beta.leetify.com/public/match-details/6072193e-43b7-4f6b-ae3a-262869bbcb9a"
+
+toothpaste1 = "https://beta.leetify.com/public/match-details/000b315a-fc4d-4999-9f2e-3d2988828ec7"
+toothpaste2 = "https://beta.leetify.com/public/match-details/d5425718-e52c-4667-baac-1740bf932d36"
+
+
+urls = [toothpaste1, toothpaste2]
 
 
 def processPlayerRow(playerRow, gameID, players, team, rounds):
@@ -42,6 +50,7 @@ def createStat(playerRow, gameID, rounds):
     currentStat.setGameID(gameID)
     return currentStat
 
+
 """
 def createPlayer(playerRow):
     playerName = playerRow.contents[0].contents[0].span.string.strip()
@@ -58,6 +67,7 @@ def createPlayer(playerRow):
     currentPlayer.setHLTVRating(playerData[13].string)
     return currentPlayer
 """
+
 
 def createGame(url, players=[]):
     gameID = url.rsplit('/', 1)[-1]
@@ -110,6 +120,33 @@ def createSeries(gamesUrls):
     for game in gamesUrls:
         series.addGame(createGame(game, series.players))
     series.printSeries()
+    return series
 
 
-createSeries(urls)
+def createCSV(series):
+    with open('series.csv', 'w', newline='') as csvfile:
+        filewriter = csv.writer(csvfile)
+
+        filewriter.writerow(['', 'K', 'A', 'D', '+/-', 'K/D', 'ADR', 'HS%', 'LR', 'HLTV'])
+        for player in series.team1:
+            stats = player.totalstats
+            filewriter.writerow([str(player.name), str(stats.kills), str(stats.assists), str(stats.deaths),
+                                 str(stats.kills - stats.deaths), str(stats.kdratio), str(stats.adr), str(stats.hsp),
+                                 str(stats.leetifyR), str(stats.hltvR)])
+
+        filewriter.writerow([])
+
+        for player in series.team2:
+            stats = player.totalstats
+            filewriter.writerow([str(player.name), str(stats.kills), str(stats.assists), str(stats.deaths),
+                                 str(stats.kills - stats.deaths), str(stats.kdratio), str(stats.adr), str(stats.hsp),
+                                 str(stats.leetifyR), str(stats.hltvR)])
+
+
+def main():
+    currentSeries = createSeries(urls)
+    createCSV(currentSeries)
+
+
+if __name__ == '__main__':
+    main()

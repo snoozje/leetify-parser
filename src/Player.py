@@ -43,13 +43,19 @@ class Player:
         self.totalstats.setAssists(totalassists)
         self.totalstats.setDeaths(totaldeaths)
         self.totalstats.setKD(round(totalkills / totaldeaths, 2))
-        self.totalstats.setADR(round(totaldamage / totalroundsplayed, 2))
-        self.totalstats.setHSPFloat(round(totalHSkills / totalroundsplayed, 2))
+        self.totalstats.setADR(round(totaldamage / totalroundsplayed, 1))
+        self.totalstats.setHSPFloat(round(totalHSkills / totalroundsplayed, 1))
         self.totalstats.setLeetifyRating(round(totalLR / totalroundsplayed, 2))
         self.totalstats.setHLTVRating(round(totalHLTVR / totalroundsplayed, 2))
 
     def __eq__(self, other):
         return isinstance(other, Player) and self.name == other.name
+
+    def __lt__(self, other):
+        return self.totalstats.hltvR - other.totalstats.hltvR < 0
+
+    def __gt__(self, other):
+        return self.totalstats.hltvR - other.totalstats.hltvR > 0
 
     def printPlayer(self):
         """
@@ -57,5 +63,5 @@ class Player:
         for stat in self.stats:
             stat.printStat()
         """
-        self.calculateTotalStats()
         self.totalstats.printStat()
+
