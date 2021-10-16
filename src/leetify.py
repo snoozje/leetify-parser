@@ -1,10 +1,12 @@
+from webbrowser import Chrome
+
 from bs4 import BeautifulSoup
 from Player import Player
 from Game import Game
 from Stat import Stat
 from Series import Series
 import requests
-import csv
+import unicodecsv as csv
 
 ncc1 = "https://beta.leetify.com/public/match-details/e481b6ab-5b67-44f9-9737-350b3b032971"
 ncc2 = "https://beta.leetify.com/public/match-details/c4678f10-398f-4190-b8ef-a9ed385c0f86"
@@ -16,8 +18,8 @@ toothpaste1 = "https://beta.leetify.com/public/match-details/000b315a-fc4d-4999-
 toothpaste2 = "https://beta.leetify.com/public/match-details/d5425718-e52c-4667-baac-1740bf932d36"
 
 
-urls = [toothpaste1, toothpaste2]
-
+urls = ["https://beta.leetify.com/app/match-details/cbab8390-dd07-4bdf-ba0a-2cddc23dc97e", "https://beta.leetify.com/app/match-details/c5696078-5601-4a3f-a97c-08c13369dcd2", "https://beta.leetify.com/app/match-details/1c1ac15e-f10f-48a4-8b80-26e0199b37e2"]
+htmls = ["FSU-mirage.html", "FSU-nuke.html", "FSU-inferno.html"]
 
 def processPlayerRow(playerRow, gameID, players, team, rounds):
     playerName = playerRow.contents[0].contents[0].span.string.strip()
@@ -51,29 +53,17 @@ def createStat(playerRow, gameID, rounds):
     return currentStat
 
 
-"""
-def createPlayer(playerRow):
-    playerName = playerRow.contents[0].contents[0].span.string.strip()
-    currentPlayer = Player(playerName)
-    playerData = playerRow.contents
+def createGame(html, players=[]):
+    # gameID = url.rsplit('/', 1)[-1]
+    gameID = ""
+    # req = requests.Session().get(url)
+    # content = req.text
 
-    currentPlayer.setKills(playerData[1].string)
-    currentPlayer.setAssists(playerData[2].string)
-    currentPlayer.setDeaths(playerData[3].string)
-    currentPlayer.setKD(playerData[5].string)
-    currentPlayer.setADR(playerData[6].string)
-    currentPlayer.setHSP(playerData[7].string)
-    currentPlayer.setLeetifyRating(playerData[12].string)
-    currentPlayer.setHLTVRating(playerData[13].string)
-    return currentPlayer
-"""
+    with open(html, 'r') as f:
+        file_content = f.read()  # Read whole file in the file_content string
 
+    soup = BeautifulSoup(file_content, features="html.parser")
 
-def createGame(url, players=[]):
-    gameID = url.rsplit('/', 1)[-1]
-    req = requests.get(url)
-    content = req.text
-    soup = BeautifulSoup(content, features="html.parser")
     playerRows = soup.find_all('tr')
 
     currentgame = Game()
@@ -92,7 +82,6 @@ def createGame(url, players=[]):
         currentgame.setMatchpage(matchpage)
 
     score = soup.find(class_="mb-0 mx-3").string
-    # print(score)
     scores = score.split(':')
     currentgame.setTeam1RoundsWon(int(scores[0]))
     currentgame.setTeam2RoundsWon(int(scores[1]))
@@ -115,16 +104,16 @@ def createGame(url, players=[]):
     return currentgame
 
 
-def createSeries(gamesUrls):
+def createSeries(gameHTMLs):
     series = Series()
-    for game in gamesUrls:
-        series.addGame(createGame(game, series.players))
+    for html in gameHTMLs:
+        series.addGame(createGame(html, series.players))
     series.printSeries()
     return series
 
 
 def createCSV(series):
-    with open('series.csv', 'w', newline='') as csvfile:
+    with open('series.csv', 'wb') as csvfile:
         filewriter = csv.writer(csvfile)
 
         filewriter.writerow(['', 'K', 'A', 'D', '+/-', 'K/D', 'ADR', 'HS%', 'LR', 'HLTV'])
@@ -134,7 +123,7 @@ def createCSV(series):
                                  str(stats.kills - stats.deaths), str(stats.kdratio), str(stats.adr), str(stats.hsp),
                                  str(stats.leetifyR), str(stats.hltvR)])
 
-        filewriter.writerow([])
+        filewriter.writerow([''])
 
         for player in series.team2:
             stats = player.totalstats
@@ -144,7 +133,7 @@ def createCSV(series):
 
 
 def main():
-    currentSeries = createSeries(urls)
+    currentSeries = createSeries(htmls)
     createCSV(currentSeries)
 
 
