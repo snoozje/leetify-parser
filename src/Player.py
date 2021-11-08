@@ -8,6 +8,8 @@ class Player:
         self.stats = []
         self.team = None
         self.totalstats = Stat()
+        self.mapsPlayed = 0
+        self.roundsPlayed = 0
 
     def setStats(self, stats):
         self.stats = stats

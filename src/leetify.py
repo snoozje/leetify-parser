@@ -1,3 +1,4 @@
+import os
 from webbrowser import Chrome
 
 from bs4 import BeautifulSoup
@@ -5,7 +6,7 @@ from Player import Player
 from Game import Game
 from Stat import Stat
 from Series import Series
-import requests
+from os import walk
 import unicodecsv as csv
 
 ncc1 = "https://beta.leetify.com/public/match-details/e481b6ab-5b67-44f9-9737-350b3b032971"
@@ -19,10 +20,15 @@ toothpaste2 = "https://beta.leetify.com/public/match-details/d5425718-e52c-4667-
 
 
 urls = ["https://beta.leetify.com/app/match-details/cbab8390-dd07-4bdf-ba0a-2cddc23dc97e", "https://beta.leetify.com/app/match-details/c5696078-5601-4a3f-a97c-08c13369dcd2", "https://beta.leetify.com/app/match-details/1c1ac15e-f10f-48a4-8b80-26e0199b37e2"]
-htmls = ["FSU-mirage.html", "FSU-nuke.html", "FSU-inferno.html"]
+htmls = []
+neublack = ["We1Dg-iwnl-", "Cubostar", "Pwniez", "TonySheng", "melonwater", "Solome6", "Snooz12", "NoodleArmss"]
 
 def processPlayerRow(playerRow, gameID, players, team, rounds):
     playerName = playerRow.contents[0].contents[0].span.string.strip()
+    """
+    if playerName not in neublack:
+        return
+    """
     currentPlayer = None
     for player in players:
         if player.name == playerName:
@@ -106,6 +112,14 @@ def createGame(html, players=[]):
 
 def createSeries(gameHTMLs):
     series = Series()
+    """
+    gameHTMLs = []
+    for root, directories, files in os.walk("./HTML"):
+        for filename in files:
+            # Join the two strings in order to form the full filepath.
+            filepath = os.path.join(root, filename)
+            gameHTMLs.append(filepath)  # Add it to the list.
+    """
     for html in gameHTMLs:
         series.addGame(createGame(html, series.players))
     series.printSeries()
