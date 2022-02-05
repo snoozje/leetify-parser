@@ -24,7 +24,6 @@ class Player:
         totalkills = 0
         totalassists = 0
         totaldeaths = 0
-        totalKD = 0
         totaldamage = 0
         totalHSkills = 0
         totalLR = 0
@@ -37,7 +36,7 @@ class Player:
             totalassists += stat.assists
             totaldeaths += stat.deaths
             totaldamage += stat.roundsplayed * stat.adr
-            totalHSkills += int(stat.roundsplayed * stat.hsp)
+            totalHSkills += int(stat.kills * stat.hsp)
             totalLR += stat.roundsplayed * stat.leetifyR
             totalHLTVR += stat.roundsplayed * stat.hltvR
 
@@ -46,12 +45,16 @@ class Player:
         self.totalstats.setDeaths(totaldeaths)
         self.totalstats.setKD(round(totalkills / totaldeaths, 2))
         self.totalstats.setADR(round(totaldamage / totalroundsplayed, 1))
-        self.totalstats.setHSPFloat(round(totalHSkills / totalroundsplayed, 1))
+        self.totalstats.setHSPFloat(round(totalHSkills / totalkills, 1))
         self.totalstats.setLeetifyRating(round(totalLR / totalroundsplayed, 2))
         self.totalstats.setHLTVRating(round(totalHLTVR / totalroundsplayed, 2))
 
     def __eq__(self, other):
-        return isinstance(other, Player) and self.name == other.name
+        return isinstance(other, Player) and ((self.name == other.name) or
+                (self.name == "Snooz12" and other.name == "Snoozje") or
+                (self.name == "Snoozje" and other.name == "Snooz12") or
+                (self.name == "melonwater" and other.name == "melonæ°´") or
+                (self.name == "melonæ°´" and other.name == "melonwater"))
 
     def __lt__(self, other):
         return self.totalstats.hltvR - other.totalstats.hltvR < 0
@@ -60,10 +63,10 @@ class Player:
         return self.totalstats.hltvR - other.totalstats.hltvR > 0
 
     def printPlayer(self):
-        """
+
         print("name:", self.name)
-        for stat in self.stats:
-            stat.printStat()
-        """
+        # for stat in self.stats:
+        #    stat.printStat()
+
         self.totalstats.printStat()
 

@@ -30,7 +30,7 @@ class Series:
                 return game.roundsplayed
 
     def printSeries(self):
-        print(self.totalrounds, "round series")
+        # print(self.totalrounds, "round series")
         for player in self.team1:
             player.calculateTotalStats()
         for player in self.team2:
@@ -46,5 +46,5 @@ class Series:
         for player in self.team2:
             print(player.name)
             player.printPlayer()
-        for game in self.games:
-            game.printShortGame()
+        # for game in self.games:
+            # game.printShortGame()

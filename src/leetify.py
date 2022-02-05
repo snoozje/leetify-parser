@@ -1,40 +1,27 @@
 import os
-from webbrowser import Chrome
-
 from bs4 import BeautifulSoup
 from Player import Player
 from Game import Game
 from Stat import Stat
 from Series import Series
-from os import walk
 import unicodecsv as csv
 
-ncc1 = "https://beta.leetify.com/public/match-details/e481b6ab-5b67-44f9-9737-350b3b032971"
-ncc2 = "https://beta.leetify.com/public/match-details/c4678f10-398f-4190-b8ef-a9ed385c0f86"
-
-neur1 = "https://beta.leetify.com/public/match-details/93a1adc9-5ae3-452f-80ec-1140955d7056"
-neur2 = "https://beta.leetify.com/public/match-details/6072193e-43b7-4f6b-ae3a-262869bbcb9a"
-
-toothpaste1 = "https://beta.leetify.com/public/match-details/000b315a-fc4d-4999-9f2e-3d2988828ec7"
-toothpaste2 = "https://beta.leetify.com/public/match-details/d5425718-e52c-4667-baac-1740bf932d36"
-
-
-urls = ["https://beta.leetify.com/app/match-details/cbab8390-dd07-4bdf-ba0a-2cddc23dc97e", "https://beta.leetify.com/app/match-details/c5696078-5601-4a3f-a97c-08c13369dcd2", "https://beta.leetify.com/app/match-details/1c1ac15e-f10f-48a4-8b80-26e0199b37e2"]
-htmls = []
-neublack = ["We1Dg-iwnl-", "Cubostar", "Pwniez", "TonySheng", "melonwater", "Solome6", "Snooz12", "NoodleArmss"]
+htmls = ["Drexel-vertigo.html", "Drexel-mirage.html"]
+neublack = ["We1Dg-iwnl-", "Cubostar", "Pwniez", "TonySheng", "melonwater", "Solome6", "Snooz12", "NoodleArmss", "Snoozje", "melonæ°´"]
 
 def processPlayerRow(playerRow, gameID, players, team, rounds):
     playerName = playerRow.contents[0].contents[0].span.string.strip()
-    """
-    if playerName not in neublack:
-        return
-    """
+
+
+    #if playerName not in neublack:
+       #return
+
     currentPlayer = None
     for player in players:
-        if player.name == playerName:
+        if (player.name == playerName) or (player.name == "Snooz12" and playerName == "Snoozje") or (player.name == "Snoozje" and playerName == "Snooz12") or (player.name == "melonwater" and playerName == "melonæ°´") or (player.name == "melonæ°´" and playerName == "melonwater"):
             currentPlayer = player
 
-    if currentPlayer == None:
+    if currentPlayer is None:
         currentPlayer = Player(playerName)
         currentPlayer.team = team
         players.append(currentPlayer)
@@ -46,16 +33,19 @@ def createStat(playerRow, gameID, rounds):
     currentStat = Stat()
     playerData = playerRow.contents
 
-    currentStat.setKills(playerData[1].string)
-    currentStat.setAssists(playerData[2].string)
-    currentStat.setDeaths(playerData[3].string)
-    currentStat.setKD(playerData[5].string)
-    currentStat.setADR(playerData[6].string)
-    currentStat.setHSP(playerData[7].string)
-    currentStat.setLeetifyRating(playerData[12].string)
-    currentStat.setHLTVRating(playerData[13].string)
-    currentStat.setRoundsPlayed(rounds)
-    currentStat.setGameID(gameID)
+    try:
+        currentStat.setKills(playerData[1].string)
+        currentStat.setAssists(playerData[2].string)
+        currentStat.setDeaths(playerData[3].string)
+        currentStat.setKD(playerData[5].string)
+        currentStat.setADR(playerData[6].string)
+        currentStat.setHSP(playerData[7].string)
+        currentStat.setLeetifyRating(playerData[12].string)
+        currentStat.setHLTVRating(playerData[13].string)
+        currentStat.setRoundsPlayed(rounds)
+        currentStat.setGameID(gameID)
+    except:
+        pass
     return currentStat
 
 
@@ -112,16 +102,32 @@ def createGame(html, players=[]):
 
 def createSeries(gameHTMLs):
     series = Series()
+
+
+    #gameHTMLs = []
+    #map = "overpass"
     """
-    gameHTMLs = []
-    for root, directories, files in os.walk("./HTML"):
+    for root, directories, files in os.walk("./Leetify/FCOL"):
         for filename in files:
-            # Join the two strings in order to form the full filepath.
-            filepath = os.path.join(root, filename)
-            gameHTMLs.append(filepath)  # Add it to the list.
+            #if map in filename:
+                filepath = os.path.join(root, filename)
+                gameHTMLs.append(filepath)
+    
+    for root, directories, files in os.walk("./Leetify/NACE"):
+        for filename in files:
+            #if map in filename:
+                filepath = os.path.join(root, filename)
+                gameHTMLs.append(filepath)
+    
+    for root, directories, files in os.walk("./Leetify/SCRIM"):
+        for filename in files:
+            #if map in filename:
+                filepath = os.path.join(root, filename)
+                gameHTMLs.append(filepath)
     """
     for html in gameHTMLs:
         series.addGame(createGame(html, series.players))
+    #print(f"{map} : {len(gameHTMLs)}")
     series.printSeries()
     return series
 
@@ -146,10 +152,6 @@ def createCSV(series):
                                  str(stats.leetifyR), str(stats.hltvR)])
 
 
-def main():
+if __name__ == '__main__':
     currentSeries = createSeries(htmls)
     createCSV(currentSeries)
-
-
-if __name__ == '__main__':
-    main()
